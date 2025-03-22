@@ -7,7 +7,7 @@ running = True
 
 # The following functions respond to each command.
 
-def addTask(tasks, id, task_name):
+def addTask(tasks, task_name):
     if tasks:
         id = max([int(key) for key in tasks.keys()]) + 1
         print("ID updated.")
@@ -149,7 +149,7 @@ def listInProgress(status):
     if not found:
         print("No tasks found marked as in-progress.")    
 
-def process_input(id, user_input):#main function that identifies commands, and executes respective functions
+def process_input(user_input):#main function that identifies commands, and executes respective functions
     match_add = re.match(r'^add\s+"(.+)"$', user_input)
     match_update = re.match(r'^update\s+(\d+)\s+"(.+)"$', user_input)
     match_list = re.match(r'^list$', user_input)
@@ -161,7 +161,7 @@ def process_input(id, user_input):#main function that identifies commands, and e
     match_listinpgr = re.match(r'^list\s+(in-progress)$', user_input)
     if match_add:
         task_name = match_add.group(1)
-        addTask(tasks, id, task_name)
+        addTask(tasks, task_name)
     elif match_update:
         id = match_update.group(1)
         task_name = match_update.group(2)
@@ -199,4 +199,4 @@ with open(file_path, "r") as json_file: #loads data from JSON file
 
 while running: #CLI
     user_input = input("task-cli ")
-    process_input(id, user_input)
+    process_input(user_input)
