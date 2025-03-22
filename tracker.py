@@ -1,6 +1,6 @@
-import re
 import json
 import datetime
+import shlex
 
 file_path = "tasks.json"
 running = True
@@ -111,43 +111,39 @@ def list(status=None):
         err_text = "No tasks found." if status is None else f"No tasks found marked as {status}."
         print(err_text)
 
+commands = {
+    "add": addTask,
+    "update": updateTask,
+    "list": list,
+    "delete": deleteTask,
+    "mark-in-progress": markInProgress,
+    "mark-done": markDone
+}
+
 def process_input(user_input):#main function that identifies commands, and executes respective functions
-    match_add = re.match(r'^add\s+"(.+)"$', user_input)
-    match_update = re.match(r'^update\s+(\d+)\s+"(.+)"$', user_input)
-    match_list = re.match(r'^list$', user_input)
-    match_delete = re.match(r"^delete\s+(\d+)$", user_input)
-    match_mkinpg = re.match(r'^mark-in-progress\s+(\d+)$', user_input)
-    match_mkdone = re.match(r'^mark-done\s+(\d+)$', user_input)
-    match_listdone = re.match(r'^list\s+(done)$', user_input)
-    match_listtodo = re.match(r'^list\s+(todo)$', user_input)
-    match_listinpgr = re.match(r'^list\s+(in-progress)$', user_input)
-    if match_add:
-        task_name = match_add.group(1)
-        addTask(task_name)
-    elif match_update:
-        id = match_update.group(1)
-        task_name = match_update.group(2)
-        updateTask(id, task_name)
-    elif match_delete:
-        id = match_delete.group(1)
-        deleteTask(id)
-    elif match_mkinpg:
-        id = match_mkinpg.group(1)
-        markInProgress(id)
-    elif match_mkdone:
-        id = match_mkdone.group(1)
-        markDone(id)
-    elif match_list:
-        list()
-    elif match_listdone:
-        status = match_listdone.group(1)
-        list(status)
-    elif match_listtodo:
-        status = match_listtodo.group(1)
-        list(status)
-    elif match_listinpgr:
-        status = match_listinpgr.group(1)
-        list(status)
+    #
+    # Split the input with shlex.split(), which turns
+    # a space-separated string into a list, while respecting quoted
+    # substrings.
+    # 
+    # Example: `add "Buy groceries"` becomes ['add', 'Buy groceries']
+    #
+    split_input = shlex.split(user_input)
+
+    # The first element of the list will be the command.
+    # We can use it to look up the command function in the commands dict.
+    command_func = commands.get(split_input[0])
+
+    if command_func:
+        try:
+            # Unpack and send the rest of the input list to the command
+            # function as parameters.
+            command_func(*split_input[1:])
+        except:
+            # Most of the time, a TypeError will be thrown if the user enters a command
+            # incorrectly, because the command function will receive the incorrect
+            # number or type of parameters that it's expecting.
+            print("Error running the command! Did you write it correctly?")
     else:
         print("Invalid command.")
 
