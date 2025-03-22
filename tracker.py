@@ -4,10 +4,12 @@ import datetime
 
 file_path = "tasks.json"
 running = True
+tasks = {}
 
 # The following functions respond to each command.
 
-def addTask(tasks, task_name):
+def addTask(task_name):
+    global tasks
     if tasks:
         id = max([int(key) for key in tasks.keys()]) + 1
         print("ID updated.")
@@ -31,7 +33,8 @@ def addTask(tasks, task_name):
     print(f"Task added: {task_name}, ID:{id}")
     return id
 
-def updateTask(tasks, id, task_name):
+def updateTask(id, task_name):
+    global tasks
     for task_id in tasks:
         if task_id == id:
             tasks[id].update({"description": task_name})
@@ -45,6 +48,7 @@ def updateTask(tasks, id, task_name):
         json.dump(tasks, json_file, indent=4)
 
 def deleteTask(id):
+    global tasks
     if id in tasks:
         del tasks[id]
         print(f"Task with ID {id} deleted.")
@@ -67,6 +71,7 @@ def deleteTask(id):
         print(f"ID number {id} not found.")
 
 def markInProgress(id):
+    global tasks
     if id in tasks:
         tasks[id].update({"status": "in-progress"})
         tasks[id].update({"updatedAt": datetime.datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S")})
@@ -78,6 +83,7 @@ def markInProgress(id):
         json.dump(tasks, json_file, indent=4)
 
 def markDone(id):
+    global tasks
     if id in tasks:
         tasks[id].update({"status": "done"})
         tasks[id].update({"updatedAt": datetime.datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S")})
@@ -89,6 +95,7 @@ def markDone(id):
         json.dump(tasks, json_file, indent=4)
 
 def list():
+    global tasks
     found = False
 
     for outer_key, value in tasks.items():
@@ -102,6 +109,7 @@ def list():
         print("No tasks have been found.")
 
 def listDone(status):
+    global tasks
     found = False
     
     for outer_key, value in tasks.items():
@@ -118,6 +126,7 @@ def listDone(status):
         print("No tasks found marked as done.")
 
 def listTodo(status):
+    global tasks
     found = False
     
     for outer_key, value in tasks.items():
@@ -134,6 +143,7 @@ def listTodo(status):
         print("No tasks found marked as to-do.")
 
 def listInProgress(status):
+    global tasks
     found = False
     
     for outer_key, value in tasks.items():
@@ -161,11 +171,11 @@ def process_input(user_input):#main function that identifies commands, and execu
     match_listinpgr = re.match(r'^list\s+(in-progress)$', user_input)
     if match_add:
         task_name = match_add.group(1)
-        addTask(tasks, task_name)
+        addTask(task_name)
     elif match_update:
         id = match_update.group(1)
         task_name = match_update.group(2)
-        updateTask(tasks, id, task_name)
+        updateTask(id, task_name)
     elif match_delete:
         id = match_delete.group(1)
         deleteTask(id)
