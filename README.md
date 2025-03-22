@@ -16,14 +16,22 @@ In order to use the CLI, you have to enter the commands as displayed below, keep
 
 - list: will provide a list of every task that has been added.
 
- The list appears as follows:
+___________________________________________
+The list appears as follows:
 
- Task #TaskID:
- id : TaskID
- description : TaskName
- status : TaskStatus
- createdAt : Time the task was created.
- updatedAt : Time the task was last updated.
+Task #TaskID:
+
+id : TaskID
+
+description : TaskName
+
+status : TaskStatus
+
+createdAt : Time the task was created.
+
+updatedAt : Time the task was last updated.
+
+___________________________________________
 
 - list todo: lists all tasks with status as "todo".
 
