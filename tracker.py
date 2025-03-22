@@ -94,26 +94,11 @@ def markDone(id):
     with open(file_path, "w") as json_file:
         json.dump(tasks, json_file, indent=4)
 
-def list():
-    global tasks
+def list(status=None):
     found = False
 
     for outer_key, value in tasks.items():
-        found = True
-        print()
-        print(f"Task #{outer_key}")
-        for key, value in value.items():
-            print(f"{key}: {value}")
-        print()
-    if not found:
-        print("No tasks have been found.")
-
-def listDone(status):
-    global tasks
-    found = False
-    
-    for outer_key, value in tasks.items():
-        if status == value["status"]:
+        if status is None or status == value["status"]:
             found = True
             print()
             print(f"Task #{outer_key}")
@@ -123,41 +108,8 @@ def listDone(status):
         else:
             continue
     if not found:
-        print("No tasks found marked as done.")
-
-def listTodo(status):
-    global tasks
-    found = False
-    
-    for outer_key, value in tasks.items():
-        if status == value["status"]:
-            found = True
-            print()
-            print(f"Task #{outer_key}")
-            for key, value in value.items():
-                print(f"{key}: {value}")
-            print()
-        else:
-            continue
-    if not found:
-        print("No tasks found marked as to-do.")
-
-def listInProgress(status):
-    global tasks
-    found = False
-    
-    for outer_key, value in tasks.items():
-        if status == value["status"]:
-            found = True
-            print()
-            print(f"Task #{outer_key}")
-            for key, value in value.items():
-                print(f"{key}: {value}")
-            print()
-        else:
-            continue
-    if not found:
-        print("No tasks found marked as in-progress.")    
+        err_text = "No tasks found." if status is None else f"No tasks found marked as {status}."
+        print(err_text)
 
 def process_input(user_input):#main function that identifies commands, and executes respective functions
     match_add = re.match(r'^add\s+"(.+)"$', user_input)
@@ -189,13 +141,13 @@ def process_input(user_input):#main function that identifies commands, and execu
         list()
     elif match_listdone:
         status = match_listdone.group(1)
-        listDone(status)
+        list(status)
     elif match_listtodo:
         status = match_listtodo.group(1)
-        listTodo(status)
+        list(status)
     elif match_listinpgr:
         status = match_listinpgr.group(1)
-        listInProgress(status)
+        list(status)
     else:
         print("Invalid command.")
 
