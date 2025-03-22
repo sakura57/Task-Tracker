@@ -6,6 +6,12 @@ file_path = "tasks.json"
 running = True
 tasks = {}
 
+def saveChanges():
+    global tasks
+
+    with open(file_path, "w") as json_file:
+        json.dump(tasks, json_file, indent=4)
+
 # The following functions respond to each command.
 
 def addTask(task_name):
@@ -27,11 +33,8 @@ def addTask(task_name):
 
     tasks[str(id)] = task
 
-    with open(file_path, "w") as json_file:
-        json.dump(tasks, json_file, indent=4)
-
     print(f"Task added: {task_name}, ID:{id}")
-    return id
+    return True
 
 def updateTask(id, task_name):
     global tasks
@@ -40,12 +43,12 @@ def updateTask(id, task_name):
             tasks[id].update({"description": task_name})
             tasks[id].update({"updatedAt": datetime.datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S")})
             print(f"Task {id} updated")
-            break
+
+            return True
     else:
         print("ID number not found.")
 
-    with open(file_path, "w") as json_file:
-        json.dump(tasks, json_file, indent=4)
+    return False
 
 def deleteTask(id):
     global tasks
@@ -62,13 +65,14 @@ def deleteTask(id):
         tasks.clear()
         tasks.update(new_tasks)
 
-        with open(file_path, "w") as json_file:
-            json.dump(tasks, json_file, indent=4)
-
         print("Task IDs rearranged.")
+
+        return True
 
     else:
         print(f"ID number {id} not found.")
+
+    return False
 
 def markInProgress(id):
     global tasks
@@ -76,11 +80,12 @@ def markInProgress(id):
         tasks[id].update({"status": "in-progress"})
         tasks[id].update({"updatedAt": datetime.datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S")})
         print(f"Task {id} is now in-progress.")
+
+        return True
     else:
         print("ID number not found.")
 
-    with open(file_path, "w") as json_file:
-        json.dump(tasks, json_file, indent=4)
+    return False
 
 def markDone(id):
     global tasks
@@ -88,11 +93,12 @@ def markDone(id):
         tasks[id].update({"status": "done"})
         tasks[id].update({"updatedAt": datetime.datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S")})
         print(f"Task {id} is done.")
+
+        return True
     else:
         print("ID number not found.")
 
-    with open(file_path, "w") as json_file:
-        json.dump(tasks, json_file, indent=4)
+    return False
 
 def list(status=None):
     found = False
@@ -111,13 +117,21 @@ def list(status=None):
         err_text = "No tasks found." if status is None else f"No tasks found marked as {status}."
         print(err_text)
 
+    return False
+
+def quitProgram():
+    global running
+
+    running = False
+
 commands = {
     "add": addTask,
     "update": updateTask,
     "list": list,
     "delete": deleteTask,
     "mark-in-progress": markInProgress,
-    "mark-done": markDone
+    "mark-done": markDone,
+    "quit": quitProgram
 }
 
 def process_input(user_input):#main function that identifies commands, and executes respective functions
@@ -138,7 +152,8 @@ def process_input(user_input):#main function that identifies commands, and execu
         try:
             # Unpack and send the rest of the input list to the command
             # function as parameters.
-            command_func(*split_input[1:])
+            if command_func(*split_input[1:]):
+                saveChanges()
         except:
             # Most of the time, a TypeError will be thrown if the user enters a command
             # incorrectly, because the command function will receive the incorrect
