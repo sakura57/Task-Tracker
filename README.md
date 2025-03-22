@@ -1,4 +1,4 @@
-This is a simple task tracker app I created to improve my programming skills. It simply uses a CLI so users can add, update, delete tasks, as well as mark them as in-progress or done. 
+This is a simple task tracker app I created as a project to improve my programming skills. It simply uses a CLI so users can add, update, delete tasks, as well as mark them as in-progress or done. 
 There is also a list function to view all tasks, with available filters depending on current task status.
 
 Instructions:
@@ -32,3 +32,5 @@ In order to use the CLI, you have to enter the commands as displayed below, keep
 - list done: lists all tasks with status as "done".
 
 I have tested all features to ensure they work as required, though I cannot be certain there are no bugs or errors.
+
+Project URL: https://roadmap.sh/projects/task-tracker
